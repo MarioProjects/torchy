@@ -26,9 +26,12 @@ class Block(nn.Module):
         self.conv1 = nn.Conv2d(
             in_planes, planes, kernel_size=1, stride=1, padding=0, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        if kernel_size==3: padding = 1
-        elif kernel_size==5: padding = 2
-        else: assert False, "Kernel size {} not contempled".format(kernel_size)
+        if kernel_size == 3:
+            padding = 1
+        elif kernel_size == 5:
+            padding = 2
+        else:
+            assert False, "Kernel size {} not contempled".format(kernel_size)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=kernel_size,
                                stride=stride, padding=padding, groups=planes, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
@@ -68,12 +71,12 @@ class EfficientNet(nn.Module):
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3,
                                stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(32)
-        
+
         self.layers = self._make_layers(in_planes=32)
-        
+
         self.conv1x1 = nn.Conv2d(cfg[-2][2], cfg[-1][2], kernel_size=1, stride=1, padding=0, bias=False)
         self.bn1x1 = nn.BatchNorm2d(cfg[-1][2])
-        
+
         self.linear = nn.Linear(cfg[-1][2], num_classes)
 
     def _make_layers(self, in_planes):
@@ -104,24 +107,25 @@ def EfficientNetB0():
            [5, 6, 112, 3, 1],
            [5, 6, 192, 4, 2],
            [3, 6, 320, 1, 2],
-           [1, 1, 1280, 1, 1]] # Last -> Conv1x1 & Pooling & F
+           [1, 1, 1280, 1, 1]]  # Last -> Conv1x1 & Pooling & F
     return EfficientNet(cfg)
+
 
 def EfficientNetB0_Constants(d, w):
     # (kernel_size, expansion, out_planes, num_blocks, stride)
     cfg = [[3, 1, 16, 1, 2],
-            [3, 6, 24, 2, 1],
-            [5, 6, 40, 2, 2],
-            [3, 6, 80, 3, 2],
-            [5, 6, 112, 3, 1],
-            [5, 6, 192, 4, 2],
-            [3, 6, 320, 1, 2],
-            [1, 1, 1280, 1, 1]] # Last -> Conv1x1 & Pooling & F
+           [3, 6, 24, 2, 1],
+           [5, 6, 40, 2, 2],
+           [3, 6, 80, 3, 2],
+           [5, 6, 112, 3, 1],
+           [5, 6, 192, 4, 2],
+           [3, 6, 320, 1, 2],
+           [1, 1, 1280, 1, 1]]  # Last -> Conv1x1 & Pooling & F
 
     for index, cfg_row in enumerate(cfg):
-        if index!=len(cfg)-1: # No quiero añadir num_blocks en el last conv1x1
-            cfg[index][-2] = math.ceil(cfg[index][-2]*d)
-        cfg[index][2] = math.ceil(cfg[index][2]*w)
+        if index != len(cfg) - 1:  # No quiero añadir num_blocks en el last conv1x1
+            cfg[index][-2] = math.ceil(cfg[index][-2] * d)
+        cfg[index][2] = math.ceil(cfg[index][2] * w)
 
     return EfficientNet(cfg)
 
@@ -132,12 +136,13 @@ def test():
     y = net(x)
     print(y.shape)
 
+
 def test_constants():
     net = EfficientNetB0_Constants(1.2, 1.1)
     x = torch.randn(2, 3, 224, 224)
     y = net(x)
     print(y.shape)
 
+
 test()
 test_constants()
-

@@ -1,7 +1,7 @@
+import PIL
 import math
 import numpy as np
 import torch
-import PIL
 
 CROSS_ENTROPY_ONE_HOT_WARNING = False
 
@@ -123,6 +123,8 @@ def findLR(model, optimizer, criterion, trainloader, final_value=10, init_value=
 ''' ######################################################################## '''
 ''' #############################  CUTOUT ################################## '''
 ''' ######################################################################## '''
+
+
 # https://arxiv.org/abs/1708.04552
 # https://github.com/uoguelph-mlrg/Cutout
 
@@ -218,6 +220,8 @@ class BatchCutout(object):
 ''' ######################################################################## '''
 ''' #############################  MIXUP ################################### '''
 ''' ######################################################################## '''
+
+
 # mixup: BEYOND EMPIRICAL RISK MINIMIZATION: https://arxiv.org/abs/1710.09412
 # https://github.com/facebookresearch/mixup-cifar10
 
@@ -255,6 +259,8 @@ def mixup_criterion(criterion, pred, y_a, y_b, lam):
 ''' ######################################################################## '''
 ''' ###########################  SAMPLE PAIRING ############################ '''
 ''' ######################################################################## '''
+
+
 # https://arxiv.org/abs/1801.02929
 
 
