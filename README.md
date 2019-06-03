@@ -14,26 +14,17 @@ python3 -m pip install tqdm opencv-python flask dlib cython seaborn
 python3 -m pip install albumentations
 python3 -m pip install ipython prompt-toolkit
 python3 -m pip install kaggle --upgrade
-
-# ESTO AL BASH
-echo ""  >> ~/.bashrc
-echo ""  >> ~/.bashrc
-echo "# TORCHY"  >> ~/.bashrc
-echo "alias venv='source ~/venv/bin/activate'" >> ~/.bashrc
-echo "venv"  >> ~/.bashrc
-source ~/.bashrc
 ```
 
-Además, si deseamos utilizar la funcionalidad de Slack ([para hacer el logging más fácil](https://github.com/MarioProjects/Python-Slack-Logging)) deberemos añadir al sistema el [token](https://github.com/MarioProjects/Python-Slack-Logging) de nuestro espacio de trabajo al sistema:
+A continuación la instalación de la 'librería' en sí es tan sencilla como:
+```sh
+pip install git+https://github.com/MarioProjects/torchy.git
+```
+
+Por último, si deseamos utilizar la funcionalidad de Slack ([para hacer el logging más fácil](https://github.com/MarioProjects/Python-Slack-Logging)) deberemos añadir al sistema el [token](https://github.com/MarioProjects/Python-Slack-Logging) de nuestro espacio de trabajo al sistema:
 
 ```sh
 echo "export SLACK_TOKEN='my-slack-token'" >> ~/.bashrc
-```
-
-Por último, pero no menos importante, podemos hacer que nuestra libreria sea accesible desde cualquier lugar. Para ello tomamos la ruta donde esta nuestra carpeta torchy:
-
-```sh
-echo "export PYTHONPATH='${PYTHONPATH}:/ruta/a/carpeta/contenedora/torchy/'"  >> ~/.bashrc
 ```
 
 

@@ -144,5 +144,5 @@ def test_constants():
     print(y.shape)
 
 
-test()
-test_constants()
+#test()
+#test_constants()
