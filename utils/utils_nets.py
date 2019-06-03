@@ -68,7 +68,7 @@ class GaussianNoise(nn.Module):
 
 def models_average(outputs, scheme, vector_solution=True):
     """
-    Dada una lista de salidas (outputs) a las que se 
+    Dada una lista de salidas (outputs) a las que se
     les aplica previamente la funcion softmax promedia dichas salidas
     teniendo dos posibilidades:
         - voting: donde la clase de mayor probabilidad vota 1 y el resto 0

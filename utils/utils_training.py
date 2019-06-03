@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import torch
+import PIL
 
 CROSS_ENTROPY_ONE_HOT_WARNING = False
 
@@ -122,9 +123,9 @@ def findLR(model, optimizer, criterion, trainloader, final_value=10, init_value=
 ''' ######################################################################## '''
 ''' #############################  CUTOUT ################################## '''
 ''' ######################################################################## '''
-
-
+# https://arxiv.org/abs/1708.04552
 # https://github.com/uoguelph-mlrg/Cutout
+
 
 class Cutout(object):
     """Randomly mask out one or more patches from an image.
@@ -217,8 +218,8 @@ class BatchCutout(object):
 ''' ######################################################################## '''
 ''' #############################  MIXUP ################################### '''
 ''' ######################################################################## '''
-'''mixup: BEYOND EMPIRICAL RISK MINIMIZATION: https://arxiv.org/abs/1710.09412
-   https://github.com/facebookresearch/mixup-cifar10'''
+# mixup: BEYOND EMPIRICAL RISK MINIMIZATION: https://arxiv.org/abs/1710.09412
+# https://github.com/facebookresearch/mixup-cifar10
 
 
 ### Ejemplo de uso
@@ -230,7 +231,7 @@ class BatchCutout(object):
 # total_loss += loss.item()
 
 def mixup_data(x, y, alpha=1.0, use_cuda=True):
-    '''Returns mixed inputs, pairs of targets, and lambda'''
+    """Returns mixed inputs, pairs of targets, and lambda"""
     if alpha > 0:
         lam = np.random.beta(alpha, alpha)
     else:
@@ -249,3 +250,18 @@ def mixup_data(x, y, alpha=1.0, use_cuda=True):
 
 def mixup_criterion(criterion, pred, y_a, y_b, lam):
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
+
+
+''' ######################################################################## '''
+''' ###########################  SAMPLE PAIRING ############################ '''
+''' ######################################################################## '''
+# https://arxiv.org/abs/1801.02929
+
+
+def SamplePairing(img1, img2, alpha=0.5):
+    """ Return the mixing of img1 with img2,
+       tanking img1 alpha (over 1) and 1-alpha for img2
+       (If alpha is 0.0, a copy of the first image is returned.
+       If alpha is 1.0, a copy of the second image is returned.)
+    """
+    return PIL.Image.blend(img1, img2, alpha)
