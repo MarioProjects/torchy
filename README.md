@@ -16,6 +16,8 @@ python3 -m pip install ipython prompt-toolkit
 python3 -m pip install kaggle --upgrade
 ```
 
+### Instalación
+
 A continuación la instalación de la 'librería' en sí es tan sencilla como:
 ```sh
 pip install git+https://github.com/MarioProjects/torchy.git
