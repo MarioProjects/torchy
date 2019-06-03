@@ -32,7 +32,7 @@ echo "export SLACK_TOKEN='my-slack-token'" >> ~/.bashrc
 Por último, pero no menos importante, podemos hacer que nuestra libreria sea accesible desde cualquier lugar. Para ello tomamos la ruta donde esta nuestra carpeta torchy:
 
 ```sh
-echo "export PYTHONPATH='${PYTHONPATH}:/media/mario/Almacen/Drive/DeepLearning/'"  >> ~/.bashrc
+echo "export PYTHONPATH='${PYTHONPATH}:/ruta/a/carpeta/contenedora/torchy/'"  >> ~/.bashrc
 ```
 
 
