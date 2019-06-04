@@ -14,7 +14,59 @@ def get_model_trainable_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def accuracy(output, target, topk=(1,)):
+def get_current_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+
+def defrost_model_params(model):
+    # Funcion para descongelar redes!
+    for param in model.parameters():
+        param.requires_grad = True
+
+
+''' ######################################################################## '''
+''' ########################### TRAINING ################################### '''
+''' ######################################################################## '''
+
+
+def train_step(train_loader, model, criterion, optimizer):
+    train_loss = []
+    model.train()
+    for image, target in train_loader:
+        image = image.type(torch.float).cuda()
+        y_pred = model(image)
+        loss = criterion(y_pred.float(), target.cuda().float())
+        optimizer.zero_grad()
+        loss.backward()
+
+        optimizer.step()
+        train_loss.append(loss.item())
+    return train_loss
+
+
+def val_step(val_loader, model, criterion):
+    val_loss = []
+    predicts, truths = [], []
+    init = -1
+    model.eval()
+    with torch.no_grad():
+        for image, target in val_loader:
+            image = image.type(torch.float).cuda()
+            y_pred = model(image)
+
+            loss = criterion(y_pred.float(), target.cuda().float())
+            val_loss.append(loss.item())
+
+            predicts.append(torch.sigmoid(y_pred).detach().cpu().numpy())
+            truths.append(target.detach().cpu().numpy())
+
+    predicts = np.concatenate(predicts).squeeze(1)
+    truths = np.concatenate(truths).squeeze(1)
+    return predicts, truths, val_loss
+
+
+def accuracy(target, output, topk=(1,)):
     """Computes the precision@k for the specified values of k"""
     maxk = max(topk)
     batch_size = target.size(0)
@@ -28,17 +80,6 @@ def accuracy(output, target, topk=(1,)):
         correct_k = correct[:k].view(-1).float().sum(0)
         res.append(correct_k.mul_(1. / batch_size))
     return res
-
-
-def get_current_lr(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
-
-
-def defrost_model_params(model):
-    # Funcion para descongelar redes!
-    for param in model.parameters():
-        param.requires_grad = True
 
 
 ''' ######################################################################## '''
