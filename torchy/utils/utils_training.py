@@ -96,7 +96,7 @@ def accuracy(target, output, topk=(1,)):
 ''' ######################################################################## '''
 
 
-def findLR(model, optimizer, criterion, trainloader, final_value=10, init_value=1e-8, verbose=1):
+def findLR(model, optimizer, criterion, train_loader, final_value=10, init_value=1e-8, verbose=1):
     # https://medium.com/coinmonks/training-neural-networks-upto-10x-faster-3246d84caacd
     """
       findLR plots the graph for the optimum learning rates for the model with the
@@ -122,7 +122,7 @@ def findLR(model, optimizer, criterion, trainloader, final_value=10, init_value=
     """
     model.train()  # setup model for training configuration
 
-    num = len(trainloader) - 1  # total number of batches
+    num = len(train_loader) - 1  # total number of batches
     mult = (final_value / init_value) ** (1 / num)
 
     losses, lrs = [], []
@@ -130,7 +130,7 @@ def findLR(model, optimizer, criterion, trainloader, final_value=10, init_value=
     beta = 0.98  # the value for smooth losses
     lr = init_value
 
-    for batch_num, (inputs, targets) in enumerate(trainloader):
+    for batch_num, (inputs, targets) in enumerate(train_loader):
 
         if verbose == 1: print("Testint LR: {}".format(lr))
         optimizer.param_groups[0]['lr'] = lr
