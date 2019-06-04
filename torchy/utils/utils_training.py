@@ -61,7 +61,7 @@ def val_step(val_loader, model, criterion):
             image = image.type(torch.float)
             y_pred = model(image)
 
-            loss = criterion(y_pred.float(), target.float())
+            loss = criterion(y_pred.float(), target.long())
             val_loss.append(loss.item())
             _, pred = y_pred.max(1)  # get the index of the max log-probability
             val_correct += pred.eq(target).sum().item()
