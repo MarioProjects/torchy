@@ -31,7 +31,7 @@ def defrost_model_params(model):
 
 
 def train_step(train_loader, model, criterion, optimizer):
-    train_loss = []
+    train_loss, train_correct = [], 0
     model.train()
     for image, target in train_loader:
         image = image.type(torch.float).cuda()
@@ -39,14 +39,17 @@ def train_step(train_loader, model, criterion, optimizer):
         loss = criterion(y_pred.float(), target.cuda().float())
         optimizer.zero_grad()
         loss.backward()
-
         optimizer.step()
+        _, pred = y_pred.max(1)  # get the index of the max log-probability
+        train_correct += pred.eq(target).sum().item()
         train_loss.append(loss.item())
-    return train_loss
+
+    train_accuracy = 100. * train_correct / len(train_loader.dataset)
+    return np.mean(train_loss), train_accuracy
 
 
 def val_step(val_loader, model, criterion):
-    val_loss = []
+    val_loss, val_correct = [], 0
     predicts, truths = [], []
     init = -1
     model.eval()
@@ -57,13 +60,16 @@ def val_step(val_loader, model, criterion):
 
             loss = criterion(y_pred.float(), target.cuda().float())
             val_loss.append(loss.item())
+            _, pred = y_pred.max(1)  # get the index of the max log-probability
+            val_correct += pred.eq(target).sum().item()
 
             predicts.append(torch.sigmoid(y_pred).detach().cpu().numpy())
             truths.append(target.detach().cpu().numpy())
 
-    predicts = np.concatenate(predicts).squeeze(1)
-    truths = np.concatenate(truths).squeeze(1)
-    return predicts, truths, val_loss
+    # predicts = np.concatenate(predicts).squeeze(1)
+    # truths = np.concatenate(truths).squeeze(1)
+    val_accuracy = 100. * val_correct / len(val_loader.dataset)
+    return np.mean(val_loss), val_accuracy
 
 
 def accuracy(target, output, topk=(1,)):
