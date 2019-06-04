@@ -136,9 +136,10 @@ def findLR(model, optimizer, criterion, train_loader, final_value=10, init_value
         optimizer.param_groups[0]['lr'] = lr
         batch_num += 1  # for non zero value
         inputs, targets = inputs.cuda(), targets.cuda()  # convert to cuda for GPU usage
+        inputs = inputs.type(torch.float)
         optimizer.zero_grad()  # clear gradients
         outputs = model(inputs)  # forward pass
-        loss = criterion(outputs, targets.long().cuda())  # compute loss
+        loss = criterion(outputs, targets.long())  # compute loss
 
         # Compute the smoothed loss to create a clean graph
         avg_loss = beta * avg_loss + (1 - beta) * loss.item()
