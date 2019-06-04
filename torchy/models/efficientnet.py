@@ -111,7 +111,7 @@ def EfficientNetB0():
     return EfficientNet(cfg)
 
 
-def EfficientNetB0_Constants(d, w):
+def EfficientNet_Constants(d, w):
     # (kernel_size, expansion, out_planes, num_blocks, stride)
     cfg = [[3, 1, 16, 1, 2],
            [3, 6, 24, 2, 1],
@@ -138,7 +138,7 @@ def test():
 
 
 def test_constants():
-    net = EfficientNetB0_Constants(1.2, 1.1)
+    net = EfficientNet_Constants(1.2, 1.1)
     x = torch.randn(2, 3, 224, 224)
     y = net(x)
     print(y.shape)
