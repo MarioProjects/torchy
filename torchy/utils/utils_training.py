@@ -4,6 +4,7 @@ import numpy as np
 import torch
 
 CROSS_ENTROPY_ONE_HOT_WARNING = False
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_model_total_parameters(model):
@@ -34,9 +35,10 @@ def train_step(train_loader, model, criterion, optimizer):
     train_loss, train_correct = [], 0
     model.train()
     for image, target in train_loader:
-        image = image.type(torch.float).cuda()
+        image, target = image.to(DEVICE), target.to(DEVICE)
+        image = image.type(torch.float)
         y_pred = model(image)
-        loss = criterion(y_pred.float(), target.cuda().float())
+        loss = criterion(y_pred.float(), target.long())
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -55,10 +57,11 @@ def val_step(val_loader, model, criterion):
     model.eval()
     with torch.no_grad():
         for image, target in val_loader:
-            image = image.type(torch.float).cuda()
+            image, target = image.to(DEVICE), target.to(DEVICE)
+            image = image.type(torch.float)
             y_pred = model(image)
 
-            loss = criterion(y_pred.float(), target.cuda().float())
+            loss = criterion(y_pred.float(), target.float())
             val_loss.append(loss.item())
             _, pred = y_pred.max(1)  # get the index of the max log-probability
             val_correct += pred.eq(target).sum().item()

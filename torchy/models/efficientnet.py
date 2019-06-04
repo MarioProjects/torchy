@@ -111,7 +111,7 @@ def EfficientNetB0():
     return EfficientNet(cfg)
 
 
-def EfficientNet_Constants(d, w):
+def EfficientNet_Constants(d, w, num_classes=10):
     # (kernel_size, expansion, out_planes, num_blocks, stride)
     cfg = [[3, 1, 16, 1, 2],
            [3, 6, 24, 2, 1],
@@ -127,7 +127,7 @@ def EfficientNet_Constants(d, w):
             cfg[index][-2] = math.ceil(cfg[index][-2] * d)
         cfg[index][2] = math.ceil(cfg[index][2] * w)
 
-    return EfficientNet(cfg)
+    return EfficientNet(cfg, num_classes=num_classes)
 
 
 def test():
