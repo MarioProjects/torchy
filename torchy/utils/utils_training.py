@@ -27,7 +27,7 @@ def defrost_model_params(model):
 
 
 ''' ######################################################################## '''
-''' ########################### TRAINING ################################### '''
+''' ######################## GENERAL TRAINING ############################## '''
 ''' ######################################################################## '''
 
 
@@ -89,6 +89,59 @@ def accuracy(target, output, topk=(1,)):
         correct_k = correct[:k].view(-1).float().sum(0)
         res.append(correct_k.mul_(1. / batch_size))
     return res
+
+
+''' ######################################################################## '''
+''' ####################### BALANCED DATALOADER ############################ '''
+''' ######################################################################## '''
+# https://discuss.pytorch.org/t/how-does-weightedrandomsampler-work/8089
+
+def create_sampler_weights(df, target_field, save_name, mu=1.0, save=True):
+    """
+    assign sample weights for each sample. rare sample have higher weights(linearly)
+    refer to
+    :param df:
+    :param target_field:
+    :param save_name:
+    :param mu:
+    :param save:
+    :return:
+    """
+    label_list = df[target_field].tolist()
+    import math
+    import pickle
+    import operator
+    from functools import reduce
+    from collections import Counter
+    freq_count = dict(Counter(label_list))
+    total = sum(freq_count.values())
+    keys = freq_count.keys()
+    assert sorted(list(keys)) == list(range(len(keys)))
+    class_weight = dict()
+    class_weight_log = dict()
+    for key in range(len(keys)):
+        score = total / float(freq_count[key])
+        score_log = math.log(mu * total / float(freq_count[key]))
+        class_weight[key] = round(score, 2) if score > 1.0 else round(1.0, 2)
+        class_weight_log[key] = round(score_log, 2) if score_log > 1.0 else round(1.0, 2)
+
+    rareness = [x[0] for x in sorted(freq_count.items(), key=operator.itemgetter(1))]
+
+    weights = []
+    sample_labels = label_list
+    for label in sample_labels:
+        for rare_label in rareness:
+            if rare_label == label:
+                weights.append(class_weight[rare_label])
+                break
+
+    assert len(weights) == len(label_list)
+    if save:
+        with open(save_name, 'wb') as f:
+            pickle.dump(weights, f)
+        print("%d weights saved into %s" % (len(label_list), save_name))
+    else:
+        return weights
 
 
 ''' ######################################################################## '''
