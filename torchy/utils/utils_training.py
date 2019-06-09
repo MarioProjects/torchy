@@ -50,7 +50,7 @@ def train_step(train_loader, model, criterion, optimizer):
     return np.mean(train_loss), train_accuracy
 
 
-def val_step(val_loader, model, criterion):
+def val_step(val_loader, model, criterion, data_predicts = False):
     val_loss, val_correct = [], 0
     predicts, truths = [], []
     init = -1
@@ -65,14 +65,17 @@ def val_step(val_loader, model, criterion):
             val_loss.append(loss.item())
             _, pred = y_pred.max(1)  # get the index of the max log-probability
             val_correct += pred.eq(target).sum().item()
+            if data_predicts:
+                predicts.append(pred.detach().cpu().numpy())
+                truths.append(target.detach().cpu().numpy())
 
-            predicts.append(torch.sigmoid(y_pred).detach().cpu().numpy())
-            truths.append(target.detach().cpu().numpy())
-
-    # predicts = np.concatenate(predicts).squeeze(1)
-    # truths = np.concatenate(truths).squeeze(1)
     val_accuracy = 100. * val_correct / len(val_loader.dataset)
-    return np.mean(val_loss), val_accuracy
+    if not data_predicts: return np.mean(val_loss), val_accuracy
+
+    predicts = np.concatenate(predicts)
+    truths = np.concatenate(truths)
+    return np.mean(val_loss), val_accuracy, predicts, truths
+
 
 
 def accuracy(target, output, topk=(1,)):
